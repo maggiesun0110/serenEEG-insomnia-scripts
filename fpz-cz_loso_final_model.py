@@ -39,7 +39,7 @@ for fold, (train_idx, val_idx) in enumerate(cv.split(X, y, groups=subject_ids)):
     train_subjects = set(subject_ids[train_idx])
     val_subjects = set(subject_ids[val_idx])
     overlap = train_subjects.intersection(val_subjects)
-    assert not overlap, f"❌ Fold {fold+1}: Subject leakage detected! Overlap: {overlap}"
+    assert not overlap, f"Fold {fold+1}: Subject leakage detected! Overlap: {overlap}"
 
     X_train, X_val = X[train_idx], X[val_idx]
     y_train, y_val = y[train_idx], y[val_idx]
