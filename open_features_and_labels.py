@@ -1,44 +1,70 @@
-#-----to see actaul files
-import numpy as np
-import pandas as pd
+import os
+from scipy.io import loadmat
+import mne
 
-features = np.load('../results/batches/features_batch_1.npy')
-labels = np.load('../results/batches/labels_batch_1.npy')
+# === Paths ===
+ISRUC_PATH = os.path.join("..", "..","data", "ISRUC sleep", "data")
+SLEEPEDF_SC_PATH = os.path.join("..", "..","data", "SleepEDF", "sc")
+SLEEPEDF_ST_PATH = os.path.join("..", "..","data", "SleepEDF", "st")
+CAPSLEEP_PATH = os.path.join("..", "..", "data", "ins1.edf")
+MENDELEY_INS_PATH = os.path.join("..", "..", "data", "Mendeley", "insomnia")
+MENDELEY_NORM_PATH = os.path.join("..", "..", "data", "Mendeley", "normal")
 
-features2 = np.load('../results/batches/features_batch_2.npy')
-labels2 = np.load('../results/batches/labels_batch_2.npy')
+# === ISRUC ===
+print("=== ISRUC (first subject) ===")
+for subj in sorted(os.listdir(ISRUC_PATH)):
+    subj_path = os.path.join(ISRUC_PATH, subj)
+    if not os.path.isdir(subj_path):
+        continue
+    mat_file = next((f for f in os.listdir(subj_path) if f.endswith(".mat")), None)
+    if mat_file:
+        mat_path = os.path.join(subj_path, mat_file)
+        mat = loadmat(mat_path)
+        channels_in_file = [key for key in mat.keys() if not key.startswith("__")]
+        print(f"{subj}: {channels_in_file}")
+    break
 
-features3 = np.load('../results/batches/features_batch_3.npy')
-labels3 = np.load('../results/batches/labels_batch_3.npy')
+# === Sleep-EDF SC ===
+print("\n=== Sleep-EDF SC (first file) ===")
+for f in sorted(os.listdir(SLEEPEDF_SC_PATH)):
+    if f.endswith(".edf"):
+        edf_path = os.path.join(SLEEPEDF_SC_PATH, f)
+        raw = mne.io.read_raw_edf(edf_path, preload=False, verbose=False)
+        print(f"{f}: {raw.ch_names}")
+        break
 
-features4 = np.load('../results/batches/features_batch_4.npy')
-labels4 = np.load('../results/batches/labels_batch_4.npy')
+# === Sleep-EDF ST ===
+print("\n=== Sleep-EDF ST (first file) ===")
+for f in sorted(os.listdir(SLEEPEDF_ST_PATH)):
+    if f.endswith(".edf"):
+        edf_path = os.path.join(SLEEPEDF_ST_PATH, f)
+        raw = mne.io.read_raw_edf(edf_path, preload=False, verbose=False)
+        print(f"{f}: {raw.ch_names}")
+        break
 
-# Print first 5 rows of features and labels
-df = pd.DataFrame(features, columns=['Delta', 'Theta', 'Alpha', 'Beta', 'Activity', 'Mobility', 'Complexity', 'Variance'])
-df['Label'] = labels
+# === CAP Sleep ===
+print("\n=== CAP Sleep ===")
+cap_file = os.path.join("..", "..", "data", "ins1.edf")
+if os.path.exists(cap_file):
+    raw = mne.io.read_raw_edf(cap_file, preload=False, verbose=False)
+    print(f"ins1.edf: {raw.ch_names}")
+else:
+    print("ins1.edf not found in data folder")
 
-df2 = pd.DataFrame(features2, columns = ['Delta', 'Theta', 'Alpha', 'Beta', 'Activity', 'Mobility', 'Complexity', 'Variance'])
-df2['label'] = labels2
+# === Mendeley Insomnia ===
+print("\n=== Mendeley Insomnia (first file) ===")
+for f in sorted(os.listdir(MENDELEY_INS_PATH)):
+    if f.endswith(".edf"):
+        edf_path = os.path.join(MENDELEY_INS_PATH, f)
+        raw = mne.io.read_raw_edf(edf_path, preload=False, verbose=False)
+        print(f"{f}: {raw.ch_names}")
+        break
 
-df3 = pd.DataFrame(features3, columns = ['Delta', 'Theta', 'Alpha', 'Beta', 'Activity', 'Mobility', 'Complexity', 'Variance'])
-df3['label'] = labels3
-
-df4 = pd.DataFrame(features4, columns = ['Delta', 'Theta', 'Alpha', 'Beta', 'Activity', 'Mobility', 'Complexity', 'Variance'])
-df4['label'] = labels4
-
-print('Features shape:', features.shape)
-print('Labels shape:', labels.shape)
-print(df.head(600))
-
-print('features2 shape:', features2.shape)
-print('labels2 shape: ', labels2.shape)
-print(df2.head(600))
-
-print('features3 shape:', features3.shape)
-print('labels3 shape: ', labels3.shape)
-print(df3.head(600))
-
-print('features4 shape:', features4.shape)
-print('labels4 shape: ', labels4.shape)
-print(df4.head(600))
+# === Mendeley Normal ===
+print("\n=== Mendeley Normal (first file) ===")
+for f in sorted(os.listdir(MENDELEY_NORM_PATH)):
+    if f.endswith(".edf"):
+        edf_path = os.path.join(MENDELEY_NORM_PATH, f)
+        raw = mne.io.read_raw_edf(edf_path, preload=False, verbose=False)
+        print(f"{f}: {raw.ch_names}")
+        break

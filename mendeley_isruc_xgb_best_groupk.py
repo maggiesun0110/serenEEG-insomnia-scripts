@@ -2,21 +2,27 @@ import numpy as np
 import os
 import joblib
 import matplotlib.pyplot as plt
+from xgboost import XGBClassifier
 from sklearn.model_selection import GroupKFold
-from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
+from sklearn.metrics import classification_report, confusion_matrix, accuracy_score, precision_score, recall_score, f1_score
 
 # === Paths ===
 results_path = os.path.join("..", "results")
 data = np.load(os.path.join(results_path, "combined_18fts.npz"))
 X, y, groups = data["features"], data["labels"], data["subject_ids"]
 
-# === Load saved model bundle ===
-model_bundle = joblib.load(os.path.join(results_path, "rf_rfe_tuned_model_better.joblib"))
+# === Load saved XGB model bundle ===
+model_bundle = joblib.load(os.path.join(results_path, "xgb_rfe_tuned_model_better.joblib"))
 best_model = model_bundle["model"]
 threshold = model_bundle["threshold"]
-selected_idx = model_bundle["selected_idx"]
+selected_features = model_bundle["selected_features"]
 
-# === Use selected features ===
+# === Map feature names back to indices ===
+channels = ["F4A1", "C4A1", "O2A1"]
+base_feats = ["delta", "theta", "alpha", "beta", "gamma", "δ/θ", "δ/α", "α/β", "θ/α",
+              "activity", "mobility", "complexity", "mean", "std", "skew"]
+feature_names = [f"{ch}_{f}" for ch in channels for f in base_feats]
+selected_idx = [feature_names.index(f) for f in selected_features]
 X = X[:, selected_idx]
 
 # Settings
@@ -53,7 +59,7 @@ for repeat in range(1, n_repeats + 1):
         X_train, X_test = X[train_idx], X[test_idx]
         y_train, y_test = y[train_idx], y[test_idx]
 
-        # Retrain model on training fold
+        # Retrain XGB model on training fold
         best_model.fit(X_train, y_train)
 
         probs = best_model.predict_proba(X_test)[:, 1]
@@ -104,7 +110,7 @@ plt.plot(range(1, n_repeats + 1), all_prec, marker='o', label='Precision')
 plt.plot(range(1, n_repeats + 1), all_rec, marker='o', label='Recall')
 plt.plot(range(1, n_repeats + 1), all_f1, marker='o', label='F1-score')
 
-plt.title(f"Repeated {n_splits}-Fold GroupKFold CV Metrics over {n_repeats} Runs")
+plt.title(f"Repeated {n_splits}-Fold GroupKFold CV Metrics over {n_repeats} Runs (XGB)")
 plt.xlabel("Repeat Number")
 plt.ylabel("Score")
 plt.ylim(0, 1.05)
