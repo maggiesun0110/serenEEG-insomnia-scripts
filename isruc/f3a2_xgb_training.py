@@ -41,7 +41,7 @@ X_train, X_test, y_train, y_test = train_test_split(
     features_scaled, all_labels, test_size=0.2, random_state=42, stratify=all_labels
 )
 
-# --------- Train XGBoost Classifier (one-time)
+# --------- xgb
 clf = XGBClassifier(
     n_estimators=100,
     max_depth=6,

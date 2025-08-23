@@ -7,7 +7,6 @@ from sklearn.metrics import classification_report, accuracy_score
 from sklearn.model_selection import GridSearchCV
 import joblib
 
-# Adjust if needed
 results_path = os.path.abspath(os.path.join(os.getcwd(), '..', 'results', 'batches'))
 
 # Load all batches

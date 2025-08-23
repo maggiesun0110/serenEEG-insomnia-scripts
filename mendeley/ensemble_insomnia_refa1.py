@@ -59,7 +59,6 @@ for i in range(n_channels):
     ch_X_train = X_train[:, i * features_per_channel:(i + 1) * features_per_channel]
     ch_X_test = X_test[:, i * features_per_channel:(i + 1) * features_per_channel]
 
-    # You can clone RF model if you want to use its exact hyperparams
     base_rf = rf_model.named_steps["rf"]
     rf_ch = RandomForestClassifier(
         class_weight='balanced',

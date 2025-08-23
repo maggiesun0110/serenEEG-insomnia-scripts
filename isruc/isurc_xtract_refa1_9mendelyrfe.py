@@ -3,7 +3,7 @@ import numpy as np
 from scipy.io import loadmat
 from scipy.signal import welch, butter, filtfilt, resample
 
-# === Feature Functions (Mendeley-style) ===
+# === Feature Functions ===
 def compute_mobility(data):
     diff1 = np.diff(data)
     var_zero = np.var(data)

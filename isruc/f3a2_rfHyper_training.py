@@ -44,7 +44,6 @@ X_train, X_test, y_train, y_test = train_test_split(
     features_scaled, all_labels, test_size=0.2, random_state=42, stratify=all_labels
 )
 
-# ======= INSERT GRIDSEARCHCV HYPERPARAMETER TUNING HERE =======
 from sklearn.model_selection import GridSearchCV
 
 param_grid = {

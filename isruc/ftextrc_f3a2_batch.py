@@ -46,8 +46,8 @@ def extract_features_for_subject(eeg_data):
 
 def get_mat_filepath(subject_folder):
     # subject_folder is full path to folder, so just join the .mat filename
-    subj_num = os.path.basename(subject_folder).replace('subject', '')  # e.g. '002'
-    mat_filename = f"subject{str(int(subj_num)).zfill(2)}.mat"  # e.g. 'subject02.mat'
+    subj_num = os.path.basename(subject_folder).replace('subject', '') 
+    mat_filename = f"subject{str(int(subj_num)).zfill(2)}.mat"  
     return os.path.join(subject_folder, mat_filename)
 
 
